@@ -2,8 +2,7 @@ FROM node:16-alpine
 WORKDIR /app
 COPY package.json ./
 RUN npm install
-# Conceda permissão de execução para o react-scripts
-RUN chmod +x node_modules/.bin/react-scripts
+RUN chmod -R 755 node_modules/.bin
 COPY . .
 RUN npm run build
 EXPOSE 3000

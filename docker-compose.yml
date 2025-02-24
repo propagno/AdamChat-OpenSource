@@ -1,0 +1,54 @@
+version: '3.8'
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - LOG_LEVEL=INFO
+      - SECRET_KEY=sua-chave-secreta
+    volumes:
+      - ./backend:/app
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/app
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+  authelia:
+    image: authelia/authelia:latest
+    ports:
+      - "9091:9091"
+    volumes:
+      - ./authelia/config:/config
+  tyk:
+    image: tykio/tyk-gateway:latest
+    ports:
+      - "8080:8080"
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend/build:/usr/share/nginx/html
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+volumes:
+  mongo-data:

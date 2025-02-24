@@ -1,59 +1,56 @@
-# Configuração do Servidor
-server:
-  # Novo formato: [tcp://]<hostname>[:<port>][/<path>]
-  address: "tcp://0.0.0.0:9091/"
-
-# Configuração de Log
-log:
-  level: info
-  format: text
-
-# Configuração de JWT para operações de reset de senha
-identity_validation:
-  reset_password:
-    jwt_secret: "AlanaBruce"
-
-# Backend de autenticação usando arquivo (para armazenar usuários)
-authentication_backend:
-  file:
-    path: /config/users_database.yml
-
-# Configuração da Sessão
-session:
-  name: authelia_session
-  secret: "BruceAlana"
-  expiration: 3600      # Tempo de expiração da sessão em segundos (1 hora)
-  inactivity: 300       # Tempo de inatividade para expiração (em segundos)
-  cookies:
-    domain: "localhost" # Utilize seu domínio ou 'localhost' para testes
-    secure: false       # Defina como true em produção com HTTPS
-    same_site: Lax      # Pode ser Lax ou Strict, conforme sua política de segurança
-
-# Regulação para proteção contra força bruta
-regulation:
-  max_retries: 3
-  find_time: 120
-  ban_time: 300
-
-# Configuração do Notificador SMTP
-notifier:
-  smtp:
-    # Novo formato: 'notifier.smtp.address' no formato '[tcp://]<hostname>[:<port>]'
-    address: "tcp://smtp.gmail.com:587"
-    username: "propagno@gmail.com"
-    password: "D3scv1p4@#"
-    sender: "Authelia <no-reply@example.com>"
-    disable_starttls: false
-
-# Controle de Acesso
-access_control:
-  default_policy: deny
-  rules:
-    - domain: "*.exemplo.com"
-      policy: one_factor
-
-# Configuração de Armazenamento (Storage)
-storage:
-  encryption_key: "sua-chave-de-encriptacao"  # Defina uma chave forte para criptografia
-  local:
-    path: /config/data/authelia.db  # Caminho para o arquivo de banco de dados (ex.: SQLite)
+version: '3.8'
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - LOG_LEVEL=INFO
+      - SECRET_KEY=sua-chave-secreta
+    volumes:
+      - ./backend:/app
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/app
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+  authelia:
+    image: authelia/authelia:latest
+    container_name: authelia
+    ports:
+      - "9091:9091"
+    volumes:
+      - ./authelia/config:/config
+    restart: always
+  tyk:
+    image: tykio/tyk-gateway:latest
+    ports:
+      - "8080:8080"
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend/build:/usr/share/nginx/html
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+volumes:
+  mongo-data:

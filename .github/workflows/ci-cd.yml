@@ -1,4 +1,3 @@
-```yaml 
      name: CI/CD Pipeline 
      on: 
        push: 
@@ -25,7 +24,8 @@
          steps: 
            - uses: actions/checkout@v3 
            - name: Test Frontend 
-             run: | cd frontend 
+             run: | 
+               cd frontend 
                npm install 
                npm test -- --watchAll=false 
            - name: Test Backend 

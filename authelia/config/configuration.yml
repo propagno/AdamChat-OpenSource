@@ -1,39 +1,56 @@
+# Configuração do Servidor (novo formato)
 server:
-  host: 0.0.0.0
-  port: 9091
+  address: "tcp://0.0.0.0:9091/"
 
+# Configuração de Log
 log:
   level: info
   format: text
 
-jwt_secret: "AlanaBruce"
+# Configuração para operações de reset de senha (JWT)
+identity_validation:
+  reset_password:
+    jwt_secret: "AlanaBruce"
 
+# Backend de autenticação utilizando arquivo para armazenar usuários
 authentication_backend:
   file:
     path: /config/users_database.yml
 
+# Configuração da Sessão
 session:
   name: authelia_session
   secret: "BruceAlana"
-  expiration: 3600
-  inactivity: 300
+  expiration: 3600      # Tempo de expiração em segundos (1 hora)
+  inactivity: 300       # Tempo de inatividade em segundos
+  cookies:
+    - domain: "127.0.0.1"                        # Um domínio válido (IP ou domínio que contenha ponto, ex: "127.0.0.1")
+      authelia_url: "https://127.0.0.1:9091"     # Use HTTPS para um esquema seguro
 
+# Regulação para proteção contra ataques de força bruta
 regulation:
   max_retries: 3
   find_time: 120
   ban_time: 300
 
+# Configuração do Notificador SMTP (usando o esquema 'submission')
 notifier:
   smtp:
+    address: "submission://smtp.gmail.com:587"
     username: "propagno@gmail.com"
     password: "D3scv1p4@#"
-    host: "smtp.gmail.com"
-    port: 587
     sender: "Authelia <no-reply@example.com>"
     disable_starttls: false
 
+# Controle de Acesso
 access_control:
   default_policy: deny
   rules:
     - domain: "*.exemplo.com"
       policy: one_factor
+
+# Configuração de Storage (obrigatório)
+storage:
+  encryption_key: "sua-chave-de-encriptacao"  # Substitua por uma chave forte e única
+  local:
+    path: /config/data/authelia.db

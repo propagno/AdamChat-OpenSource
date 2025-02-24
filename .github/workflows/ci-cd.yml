@@ -1,0 +1,52 @@
+```yaml 
+     name: CI/CD Pipeline 
+     on: 
+       push: 
+         branches: [ main ] 
+       pull_request: 
+         branches: [ main ] 
+     jobs: 
+       lint: 
+         runs-on: ubuntu-latest 
+         steps: 
+           - uses: actions/checkout@v3 
+           - name: Lint Frontend 
+             run: | 
+               cd frontend 
+               npm install 
+               npm run lint 
+           - name: Lint Backend 
+             run: | 
+               cd backend 
+               pip install flake8 
+               flake8 . 
+       test: 
+         runs-on: ubuntu-latest 
+         steps: 
+           - uses: actions/checkout@v3 
+           - name: Test Frontend 
+             run: | cd frontend 
+               npm install 
+               npm test -- --watchAll=false 
+           - name: Test Backend 
+             run: | 
+               cd backend 
+               pip install -r requirements.txt 
+               pytest --maxfail=1 --disable-warnings -q 
+       build: 
+         runs-on: ubuntu-latest 
+         steps: 
+           - uses: actions/checkout@v3 
+           - name: Build Docker Images 
+             run: | 
+               docker build -t adamchat-backend ./backend 
+               docker build -t adamchat-frontend ./frontend  deploy: 
+         needs: build 
+         runs-on: ubuntu-latest 
+         steps: 
+           - name: Deploy to Kubernetes 
+             env: 
+               KUBECONFIG: ${{ secrets.KUBECONFIG }} 
+             run: | 
+               kubectl apply -f deploy/backend-deployment.yaml 
+               kubectl apply -f deploy/frontend-deployment.yaml

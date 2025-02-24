@@ -1,0 +1,39 @@
+server:
+  host: 0.0.0.0
+  port: 9091
+
+log:
+  level: info
+  format: text
+
+jwt_secret: "AlanaBruce"
+
+authentication_backend:
+  file:
+    path: /config/users_database.yml
+
+session:
+  name: authelia_session
+  secret: "BruceAlana"
+  expiration: 3600
+  inactivity: 300
+
+regulation:
+  max_retries: 3
+  find_time: 120
+  ban_time: 300
+
+notifier:
+  smtp:
+    username: "propagno@gmail.com"
+    password: "D3scv1p4@#"
+    host: "smtp.gmail.com"
+    port: 587
+    sender: "Authelia <no-reply@example.com>"
+    disable_starttls: false
+
+access_control:
+  default_policy: deny
+  rules:
+    - domain: "*.exemplo.com"
+      policy: one_factor

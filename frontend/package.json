@@ -3,17 +3,25 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "cross-env GENERATE_SOURCEMAP=false craco start",
+    "build": "craco build",
     "lint": "eslint src"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.5",
+    "@mui/material": "^6.4.5",
+    "@react-keycloak/web": "^3.4.0",
+    "axios": "^1.7.9",
+    "keycloak-js": "^26.2.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.3.0"
   },
   "devDependencies": {
-    "eslint": "^8.0.0",
+    "@craco/craco": "^7.1.0",
+    "cross-env": "^7.0.3",
     "react-scripts": "5.0.1"
   },
   "browserslist": {

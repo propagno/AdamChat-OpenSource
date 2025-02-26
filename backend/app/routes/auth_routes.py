@@ -1,59 +1,36 @@
-from flask import Blueprint, request, jsonify
-from app.services.auth_service import register_user, validate_user
+from flask import Blueprint, redirect, url_for, request, session, jsonify
+from authlib.integrations.flask_client import OAuth
+import os
 
-auth_bp = Blueprint("auth_bp", __name__, url_prefix='/auth')
+auth_bp = Blueprint("auth_bp", __name__, url_prefix="/auth")
 
-
-@auth_bp.route('/register', methods=['POST'])
-def register():
-    """
-    Endpoint para registro de novo usuário.
-    Exemplo de payload:
-    {
-      "nome": "João Silva",
-      "email": "joao@example.com",
-      "senha": "senha123"
-    }
-    """
-    data = request.get_json()
-    if not data:
-        return jsonify({"error": "Dados inválidos"}), 400
-
-    nome = data.get('nome')
-    email = data.get('email')
-    senha = data.get('senha')
-
-    if not nome or not email or not senha:
-        return jsonify({"error": "Todos os campos são obrigatórios"}), 400
-
-    user, error = register_user(nome, email, senha)
-    if error:
-        return jsonify({"error": error}), 400
-
-    return jsonify({"message": "Usuário criado com sucesso", "user": user}), 201
+# Configure o OAuth usando variáveis de ambiente
+oauth = OAuth()
+oauth.register(
+    name='keycloak',
+    server_metadata_url=os.getenv("KEYCLOAK_DISCOVERY_URL"),
+    client_id=os.getenv("KEYCLOAK_CLIENT_ID"),
+    client_secret=os.getenv("KEYCLOAK_CLIENT_SECRET"),
+    client_kwargs={'scope': 'openid profile email'},
+)
 
 
-@auth_bp.route('/login', methods=['POST'])
+@auth_bp.route("/login")
 def login():
-    """
-    Endpoint para login do usuário.
-    Exemplo de payload:
-    {
-      "email": "joao@example.com",
-      "senha": "senha123"
-    }
-    """
-    data = request.get_json() or request.form
-    email = data.get('email')
-    senha = data.get('senha')
+    redirect_uri = url_for("auth_bp.callback", _external=True)
+    return oauth.keycloak.authorize_redirect(redirect_uri)
 
-    if not email or not senha:
-        return jsonify({"error": "Email e senha são obrigatórios"}), 400
 
-    user = validate_user(email, senha)
-    if user:
-        # Aqui você pode gerar um token JWT para o usuário. Exemplo:
-        # token = generate_jwt(user)  (Função a ser implementada)
-        return jsonify({"message": "Login efetuado com sucesso", "user": user}), 200
+@auth_bp.route("/callback")
+def callback():
+    token = oauth.keycloak.authorize_access_token()
+    userinfo = oauth.keycloak.parse_id_token(token)
+    session["user"] = userinfo  # Armazene as informações do usuário na sessão
+    # Você pode criar uma sessão customizada ou gerar um JWT para o frontend
+    return redirect("http://localhost:3002/dashboard")
 
-    return jsonify({"error": "Credenciais inválidas"}), 401
+
+@auth_bp.route("/logout")
+def logout():
+    session.clear()
+    return redirect("http://localhost:3002")

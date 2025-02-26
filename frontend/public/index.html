@@ -4,14 +4,35 @@
     <meta charset="utf-8" />
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#1976d2" />
     <meta name="description" content="AdamChat - Aplicação de chat em tempo real" />
     <title>AdamChat</title>
+    <!-- Fonte Roboto do Google Fonts para um visual moderno -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link 
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" 
+      rel="stylesheet">
+    <!-- Reset CSS e estilos globais -->
     <link rel="stylesheet" href="%PUBLIC_URL%/static/css/main.css" />
+    <style>
+      /* Reset básico e estilos globais */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f5f5f5;
+        color: #333;
+      }
+    </style>
   </head>
   <body>
     <noscript>Habilite o JavaScript para utilizar a aplicação.</noscript>
     <div id="root"></div>
+    <!-- O React injetará todo o conteúdo aqui -->
     <script src="%PUBLIC_URL%/static/js/main.js"></script>
   </body>
 </html>

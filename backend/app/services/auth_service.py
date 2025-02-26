@@ -14,18 +14,16 @@ db = client.get_default_database()  # ou: db = client['adamchat']
 
 def register_user(nome, email, senha):
     users_collection = db.users
-    # Verifica se o usuário já existe
     if users_collection.find_one({'email': email}):
         return None, "Usuário já existe"
-    # Gera um hash seguro para a senha
-    hashed_password = generate_password_hash(senha)
+    # Força o uso do algoritmo 'pbkdf2:sha256'
+    hashed_password = generate_password_hash(senha, method="pbkdf2:sha256")
     user = {
         'nome': nome,
         'email': email,
         'senha': hashed_password
     }
     result = users_collection.insert_one(user)
-    # Opcional: Converter o _id para string
     user['_id'] = str(result.inserted_id)
     return user, None
 

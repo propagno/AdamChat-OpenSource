@@ -5,3 +5,10 @@ requests==2.28.1
 flasgger==0.9.5
 werkzeug==2.0.3
 pymongo==4.3.3
+authlib
+python-jose
+requests
+Flask-Cors
+Flask-OIDC
+PyJWT==2.6.0
+axios

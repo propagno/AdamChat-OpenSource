@@ -1,9 +1,12 @@
-from flask import Blueprint, render_template, make_response
+# backend/app/routes/dashboard_routes.py
 
-dashboard_bp = Blueprint("dashboard_bp", __name__)
+from flask import Blueprint, jsonify
+from app.auth_middleware import token_required  # Importe o middleware
 
-@dashboard_bp.route("/dashboard")
+dashboard_bp = Blueprint('dashboard', __name__)
+
+
+@dashboard_bp.route('/dashboard', methods=['GET'])
+@token_required
 def dashboard():
-    response = make_response(render_template("dashboard.html"))
-    response.headers["Content-Type"] = "text/html; charset=utf-8"
-    return response
+    return jsonify({'message': 'Bem-vindo ao Dashboard!'})

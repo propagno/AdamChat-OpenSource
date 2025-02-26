@@ -1,9 +1,16 @@
+// src/components/PrivateRoute.js
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { useKeycloak } from '@react-keycloak/web';
+import { Navigate, Outlet } from 'react-router-dom';
 
-const PrivateRoute = ({ children }) => {
-  const token = localStorage.getItem('id_token');
-  return token ? children : <Navigate to="/login" />;
+const PrivateRoute = () => {
+  const { keycloak, initialized } = useKeycloak();
+
+  if (!initialized) {
+    return <div>Carregando...</div>;
+  }
+
+  return keycloak.authenticated ? <Outlet /> : <Navigate to="/" />;
 };
 
 export default PrivateRoute;

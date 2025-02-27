@@ -8,6 +8,9 @@ services:
       - FLASK_ENV=development
       - LOG_LEVEL=INFO
       - SECRET_KEY=sua-chave-secreta
+      - MONGODB_URI=mongodb://mongodb:27017/adamchat
+    depends_on:
+      - mongodb
     volumes:
       - ./backend:/app
   frontend:

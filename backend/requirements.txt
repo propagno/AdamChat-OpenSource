@@ -11,4 +11,6 @@ requests
 Flask-Cors
 Flask-OIDC
 PyJWT==2.6.0
-axios
+celery
+redis
+dotenv

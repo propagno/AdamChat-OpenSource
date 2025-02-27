@@ -6,6 +6,8 @@ import { ReactKeycloakProvider } from '@react-keycloak/web';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import keycloak from './services/keycloak';
 import App from './App';
+import './index.css';
+
 
 const theme = createTheme({
   palette: {

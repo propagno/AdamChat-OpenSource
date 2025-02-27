@@ -1,0 +1,27 @@
+/* src/index.css */
+
+/* Estilo global para a aplicação React */
+html, body {
+    scroll-behavior: smooth;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f6f8;
+  }
+  
+  /* Ajuste de padding para o conteúdo abaixo da Navbar fixa */
+  main {
+    padding-top: 64px; /* Ajuste para altura da AppBar */
+  }
+  
+  /* Estilo para botões e links */
+  button, a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.2s ease;
+  }
+  
+  button:hover, a:hover {
+    color: #1565c0;
+  }
+  

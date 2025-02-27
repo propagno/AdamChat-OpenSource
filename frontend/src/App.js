@@ -1,47 +1,45 @@
 // src/App.js
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Chat from './components/Chat';
 import { useKeycloak } from '@react-keycloak/web';
+import { Box, Toolbar } from '@mui/material';
+import Navbar from './components/Navbar';
+import Chat from './components/Chat';
+import FichaPaciente from './components/FichaPaciente';
+import Dashboard from './components/Dashboard';
 import LoginButton from './components/LoginButton';
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   const { keycloak, initialized } = useKeycloak();
-
-  const handleLogout = () => {
-    keycloak.logout({ redirectUri: 'http://localhost:3002/' });
-  };
 
   if (!initialized) {
     return <div>Carregando...</div>;
   }
 
   return (
-    <Box>
-      <AppBar position="static" sx={{ backgroundColor: "#1976d2" }}>
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            AdamChat
-          </Typography>
-          {keycloak.authenticated && keycloak.tokenParsed && (
-            <>
-              <Typography variant="body1" sx={{ mr: 2 }}>
-                {keycloak.tokenParsed.name || keycloak.tokenParsed.preferred_username}
-              </Typography>
-              <Button color="inherit" onClick={handleLogout}>Deslogar</Button>
-            </>
-          )}
-        </Toolbar>
-      </AppBar>
-      <Routes>
-        <Route path="/" element={keycloak.authenticated ? <Navigate to="/chat" /> : <LoginButton />} />
-        <Route element={<PrivateRoute />}>
-          <Route path="/chat" element={<Chat />} />
-        </Route>
-        <Route path="*" element={<Navigate to="/chat" />} />
-      </Routes>
+    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+      {/* Navbar Fixa na Parte Superior */}
+      <Navbar />
+
+      {/* Conteúdo Principal com Padding no Topo */}
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Toolbar /> {/* Espaço reservado para a Navbar */}
+        <Routes>
+          {/* Redirecionamento inicial para o Dashboard */}
+          <Route path="/" element={keycloak.authenticated ? <Navigate to="/dashboard" /> : <LoginButton />} />
+          
+          {/* Rotas protegidas */}
+          <Route element={<PrivateRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/ficha-paciente" element={<FichaPaciente />} />
+          </Route>
+          
+          {/* Redirecionamento para o Dashboard caso rota não encontrada */}
+          <Route path="*" element={<Navigate to="/dashboard" />} />
+        </Routes>
+      </Box>
     </Box>
   );
 }

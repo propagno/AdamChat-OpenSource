@@ -10,8 +10,8 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@mui/icons-material": "^6.4.5",
-    "@mui/material": "^6.4.5",
+    "@mui/icons-material": "^6.4.6",
+    "@mui/material": "^6.4.6",
     "@react-keycloak/web": "^3.4.0",
     "axios": "^1.7.9",
     "keycloak-js": "^26.2.0",

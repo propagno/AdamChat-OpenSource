@@ -1,0 +1,123 @@
+.feedback-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
+  width: 100%;
+}
+
+.feedback-message {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slide-in 0.3s ease forwards;
+  font-size: 14px;
+  min-height: 60px;
+}
+
+.feedback-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.feedback-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.feedback-text {
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+.feedback-close {
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 22px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  padding: 0 5px;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 25px;
+  width: 25px;
+}
+
+.feedback-close:hover {
+  opacity: 1;
+}
+
+/* Estilos para os diferentes tipos de feedback */
+.feedback-message.success {
+  background-color: #e6f7ee;
+  color: #0a6b39;
+  border-left: 4px solid #2e7d32;
+}
+
+.feedback-message.error {
+  background-color: #fdeded;
+  color: #b80000;
+  border-left: 4px solid #d32f2f;
+}
+
+.feedback-message.warning {
+  background-color: #fff8e6;
+  color: #985e00;
+  border-left: 4px solid #f57c00;
+}
+
+.feedback-message.info {
+  background-color: #e6f4ff;
+  color: #0757a0;
+  border-left: 4px solid #1976d2;
+}
+
+/* Animações */
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-out {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.feedback-exit {
+  animation: slide-out 0.3s ease forwards;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 480px) {
+  .feedback-container {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: calc(100% - 20px);
+  }
+} 

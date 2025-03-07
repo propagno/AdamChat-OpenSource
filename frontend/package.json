@@ -3,28 +3,53 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "cross-env GENERATE_SOURCEMAP=false craco start",
-    "build": "craco build",
-    "lint": "eslint src"
+    "start": "react-scripts start",
+    "start:local": "set BROWSER=none&& set PORT=3000&& react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "lint": "eslint src",
+    "analyze": "source-map-explorer 'build/static/js/*.js'"
   },
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
-    "@mui/icons-material": "^6.4.6",
-    "@mui/material": "^6.4.6",
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.0",
+    "@mui/material": "^5.14.0",
+    "@mui/styles": "^5.14.0",
+    "@mui/system": "^5.14.0",
     "@react-keycloak/web": "^3.4.0",
-    "axios": "^1.7.9",
-    "keycloak-js": "^26.2.0",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "react-markdown": "^10.0.0",
-    "react-router-dom": "^6.3.0",
-    "remark-gfm": "^4.0.1"
+    "axios": "^1.4.0",
+    "bootstrap": "^5.3.3",
+    "framer-motion": "^12.4.10",
+    "jwt-decode": "^4.0.0",
+    "react": "^18.3.1",
+    "react-bootstrap": "^2.10.9",
+    "react-dom": "^18.3.1",
+    "react-error-boundary": "^4.0.11",
+    "react-helmet": "^6.1.0",
+    "react-markdown": "^8.0.7",
+    "react-router-dom": "^6.11.2",
+    "react-scripts": "5.0.1",
+    "remark-gfm": "^3.0.1",
+    "web-vitals": "^4.2.4"
   },
   "devDependencies": {
-    "@craco/craco": "^7.1.0",
-    "cross-env": "^7.0.3",
-    "react-scripts": "5.0.1"
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^12.1.5",
+    "@testing-library/user-event": "^14.4.3",
+    "eslint": "^8.38.0",
+    "http-proxy-middleware": "^3.0.3",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.1",
+    "prettier": "^2.8.7",
+    "source-map-explorer": "^2.5.3"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "browserslist": {
     "production": [
@@ -37,5 +62,16 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write"
+    ]
+  },
+  "proxy": "http://backend-dev:5000"
 }

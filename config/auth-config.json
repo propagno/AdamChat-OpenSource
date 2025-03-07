@@ -1,0 +1,17 @@
+{
+  "apiBaseUrl": "/api",
+  "authEndpoints": {
+    "login": "/api/auth/login",
+    "register": "/api/auth/register",
+    "logout": "/api/auth/logout",
+    "status": "/api/auth/status"
+  },
+  "tokenKey": "access_token",
+  "refreshTokenKey": "refresh_token",
+  "userKey": "user_data",
+  "sessionTimeout": 1800000,
+  "useSecureCookies": true,
+  "csrfTokenHeader": "X-CSRF-Token",
+  "useKeycloak": false,
+  "useNativeAuth": true
+} 

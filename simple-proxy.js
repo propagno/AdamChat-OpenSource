@@ -1,0 +1,1 @@
+module.exports = function(app) { const { createProxyMiddleware } = require('http-proxy-middleware'); console.log('Setting up proxy middleware'); app.use('/api', createProxyMiddleware({ target: 'http://backend-dev:5000', changeOrigin: true, secure: false, logLevel: 'debug' })); console.log('Proxy middleware setup complete'); };

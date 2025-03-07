@@ -1,51 +1,208 @@
 version: '3.8'
 services:
+  # -----------------------------
+  # Backend (antigo Chat Integrado)
+  # -----------------------------
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
     ports:
       - "5000:5000"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
     environment:
+      - FLASK_APP=run.py
       - FLASK_ENV=development
-      - LOG_LEVEL=INFO
-      - SECRET_KEY=sua-chave-secreta
+      - FLASK_DEBUG=1
       - MONGODB_URI=mongodb://mongodb:27017/adamchat
-    depends_on:
-      - mongodb
+      - RABBITMQ_URL=amqp://rabbitmq:5672/
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=sua-chave-secreta
+      - LOG_LEVEL=INFO
     volumes:
       - ./backend:/app
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:80"
-    volumes:
-      - ./frontend:/app
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    command: gunicorn --bind 0.0.0.0:5000 --workers 4 --reload run:app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # -----------------------------
+  # MongoDB
+  # -----------------------------
   mongodb:
     image: mongo:latest
+    container_name: mongodb
     ports:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+    restart: unless-stopped
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh 127.0.0.1:27017/test --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # -----------------------------
+  # RabbitMQ
+  # -----------------------------
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # -----------------------------
+  # Redis
+  # -----------------------------
   redis:
     image: redis:alpine
+    container_name: redis
     ports:
       - "6379:6379"
-  tyk:
-    image: tykio/tyk-gateway:latest
-    ports:
-      - "8080:8080"
-  nginx:
-    image: nginx:alpine
-    ports:
-      - "80:80"
     volumes:
-      - ./frontend/build:/usr/share/nginx/html
+      - redis-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # -----------------------------
+  # Tyk Gateway
+  # -----------------------------
+  tyk_gateway:
+    build:
+      context: ./tyk
+      dockerfile: Dockerfile
+    container_name: tyk_gateway
+    depends_on:
+      redis:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+    restart: unless-stopped
+
+  # -----------------------------
+  # Frontend (React)
+  # -----------------------------
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 2G
+    environment:
+      - NODE_ENV=production
+      - GENERATE_SOURCEMAP=false
+      - REACT_APP_API_URL=http://localhost:5000/api
+      - REACT_APP_BACKEND_URL=http://localhost:5000
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/app  # Exemplo de configuração com volume
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:3000 || exit 0"]
+      interval: 30s
+      timeout: 15s
+      start_period: 60s
+      retries: 5
+
+  # -----------------------------
+  # Logging & Monitoring
+  # -----------------------------
+
   loki:
-    image: grafana/loki:latest
+    build:
+      context: ./loki
+      dockerfile: Dockerfile
+    container_name: loki
     ports:
       - "3100:3100"
+    command: -config.file=/etc/loki/loki-config.yaml
+    volumes:
+      - ./loki-config.yaml:/etc/loki/loki-config.yaml
+      - loki-data:/tmp/loki
+    restart: unless-stopped
+
+
+  promtail:
+      image: grafana/promtail:2.7.1
+      container_name: promtail
+      volumes:
+        - /var/log:/var/log
+        - /var/lib/docker/containers:/var/lib/docker/containers:ro
+        - ./promtail-config.yaml:/etc/promtail/config.yaml
+      command: -config.file=/etc/promtail/config.yaml
+      restart: unless-stopped
+
   grafana:
-    image: grafana/grafana:latest
+      image: grafana/grafana:latest
+      container_name: grafana
+      ports:
+        - "3001:3000"
+      environment:
+        - GF_SECURITY_ADMIN_PASSWORD=admin
+      volumes:
+        - grafana-data:/var/lib/grafana
+      depends_on:
+        - loki
+      restart: unless-stopped
+
+  # -----------------------------
+  # Nginx Proxy
+  # -----------------------------
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
     ports:
-      - "3001:3000"
+      - "8190:8190"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    restart: unless-stopped
+
 volumes:
   mongo-data:
+  rabbitmq-data:
+  redis-data:
+  grafana-data:
+  loki-data:
+  loki-wal:
+    driver: local

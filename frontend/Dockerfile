@@ -1,25 +1,35 @@
-# Dockerfile do frontend
+# frontend/Dockerfile
 
-# Use uma imagem base do Node
-FROM node:18-alpine
+# Estágio de build
+FROM node:18-alpine as build
 
-# Defina o diretório de trabalho
+# Definir diretório de trabalho
 WORKDIR /app
 
-# Copie os arquivos necessários
+# Copiar package.json e package-lock.json
 COPY package*.json ./
 
-# Instale as dependências
-RUN npm install
+# Instalar dependências com clean npm cache
+RUN npm cache clean --force && \
+    npm install --legacy-peer-deps --no-optional
 
-# Copie o restante do código-fonte
+# Copiar código fonte
 COPY . .
 
-# Construa a aplicação React
+# Build da aplicação
 RUN npm run build
 
-# Exponha a porta do React
+# Estágio de produção
+FROM nginx:alpine
+
+# Copiar a build do estágio anterior
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Copiar configuração do nginx
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+
+# Expor porta
 EXPOSE 3000
 
-# Inicie a aplicação
-CMD ["npm", "start"]
+# Iniciar nginx
+CMD ["nginx", "-g", "daemon off;"]

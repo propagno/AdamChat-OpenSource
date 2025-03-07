@@ -1,0 +1,18 @@
+{
+    "name": "backend",
+    "target_url": "http://backend:5000",
+    "listen_path": "/backend/",
+    "strip_listen_path": true,
+    "protocol": "http",
+    "auth": {
+      "auth_header_name": "Authorization",
+      "use_certificate_auth": false,
+      "use_keyless": true
+    },
+    "rate_limit": {
+      "enabled": true,
+      "per": 1,
+      "rate": 5
+    }
+  }
+  

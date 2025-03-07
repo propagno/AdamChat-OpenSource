@@ -7,19 +7,13 @@ module.exports = {
           enforce: 'pre',
           use: ['source-map-loader'],
           exclude: [
-            /node_modules\/@react-keycloak\/core/,
-            /node_modules\/@react-keycloak\/web/,
+            // Pacotes que podem causar problemas com source maps
           ],
         },
       ],
     },
     ignoreWarnings: [
-      {
-        module: /@react-keycloak\/core/,
-      },
-      {
-        module: /@react-keycloak\/web/,
-      },
+      // Avisos que podem ser ignorados
     ],
   };
   

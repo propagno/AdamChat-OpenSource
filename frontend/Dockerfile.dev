@@ -1,0 +1,29 @@
+# Usar uma imagem Node.js como base
+FROM node:18-alpine
+
+# Diretório de trabalho
+WORKDIR /app
+
+# Copiar apenas package.json e package-lock.json primeiro
+# para aproveitar o cache de camadas do Docker
+COPY package*.json ./
+
+# Instalar dependências
+RUN npm install --legacy-peer-deps
+
+# Copiar configuração de proxy para Docker
+COPY setupProxy.docker.js src/setupProxy.js
+
+# Definir variáveis de ambiente
+ENV NODE_ENV=development
+ENV CHOKIDAR_USEPOLLING=true
+ENV WDS_SOCKET_PORT=0
+ENV REACT_APP_API_URL=http://backend:5000
+ENV REACT_APP_BACKEND_URL=http://backend:5000
+ENV DOCKER_ENV=true
+
+# Expor porta
+EXPOSE 3000
+
+# Comando para iniciar o servidor de desenvolvimento com hot reload
+CMD ["npm", "start"] 

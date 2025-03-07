@@ -7,21 +7,120 @@ html, body {
     padding: 0;
     font-family: 'Roboto', sans-serif;
     background-color: #f4f6f8;
+    height: 100%;
+  }
+  
+  body {
+    overflow-x: hidden;
+  }
+  
+  #root {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
   }
   
   /* Ajuste de padding para o conteúdo abaixo da Navbar fixa */
   main {
     padding-top: 64px; /* Ajuste para altura da AppBar */
+    flex: 1;
   }
   
   /* Estilo para botões e links */
   button, a {
     text-decoration: none;
     color: inherit;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
   }
   
   button:hover, a:hover {
     color: #1565c0;
   }
+  
+  /* Estilizações para cartões e contêineres */
+  .MuiCard-root {
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .MuiCard-root:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+  
+  /* Melhorias de Acessibilidade */
+  :focus {
+    outline: 2px solid #1976d2;
+    outline-offset: 2px;
+  }
+  
+  /* Estilização para as mensagens no chat */
+  .message-bubble {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Barra de rolagem personalizada */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #b0bec5;
+    border-radius: 10px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #90a4ae;
+  }
+  
+  /* Estilos para o modo de carregamento */
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+  }
+  
+  .loading-text {
+    margin-top: 16px;
+    color: #616161;
+  }
+  
+  /* Responsividade para dispositivos móveis */
+  @media (max-width: 600px) {
+    main {
+      padding-top: 56px; /* Ajuste para AppBar em telas menores */
+    }
+    
+    .MuiToolbar-root {
+      padding-left: 8px;
+      padding-right: 8px;
+    }
+  }
+  
+  /* Estilos de ajuda para espaçamento */
+  .mt-2 { margin-top: 16px; }
+  .mb-2 { margin-bottom: 16px; }
+  .mr-2 { margin-right: 16px; }
+  .ml-2 { margin-left: 16px; }
+  .p-2 { padding: 16px; }
   

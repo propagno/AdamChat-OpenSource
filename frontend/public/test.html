@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #1976d2;
+        }
+        button {
+            background-color: #1976d2;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #1565c0;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .result {
+            margin-top: 20px;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>API Connection Test</h1>
+    <p>This page tests various ways of connecting to the backend API.</p>
+
+    <div>
+        <h2>Test 1: Relative URL (via proxy)</h2>
+        <button id="testProxy">Test Proxy Connection</button>
+        <div class="result" id="proxyResult"></div>
+    </div>
+
+    <div>
+        <h2>Test 2: Direct to localhost:5000</h2>
+        <button id="testDirect">Test Direct Connection</button>
+        <div class="result" id="directResult"></div>
+    </div>
+
+    <div>
+        <h2>Test 3: Test Login</h2>
+        <button id="testLogin">Test Login Request</button>
+        <div class="result" id="loginResult"></div>
+    </div>
+
+    <script>
+        // Test 1: Proxy Connection
+        document.getElementById('testProxy').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('proxyResult');
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                const startTime = Date.now();
+                const response = await fetch('/api/health');
+                const endTime = Date.now();
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <p class="success">Success! (${endTime - startTime}ms)</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <p class="error">Error: ${error.message}</p>
+                    <pre>${error.stack}</pre>
+                `;
+            }
+        });
+
+        // Test 2: Direct Connection
+        document.getElementById('testDirect').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('directResult');
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                const startTime = Date.now();
+                const response = await fetch('http://localhost:5000/api/health');
+                const endTime = Date.now();
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <p class="success">Success! (${endTime - startTime}ms)</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <p class="error">Error: ${error.message}</p>
+                    <pre>${error.stack}</pre>
+                `;
+            }
+        });
+
+        // Test 3: Login
+        document.getElementById('testLogin').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('loginResult');
+            resultDiv.innerHTML = 'Testing...';
+            
+            const testCredentials = {
+                email: 'test@example.com',
+                password: 'password123'
+            };
+            
+            try {
+                const startTime = Date.now();
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testCredentials)
+                });
+                const endTime = Date.now();
+                
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <p class="${response.ok ? 'success' : 'error'}">
+                        Status: ${response.status} (${endTime - startTime}ms)
+                    </p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <p class="error">Error: ${error.message}</p>
+                    <pre>${error.stack}</pre>
+                `;
+            }
+        });
+    </script>
+</body>
+</html> 

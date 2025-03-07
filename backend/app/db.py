@@ -1,13 +1,19 @@
-from pymongo import MongoClient
-import os
-from dotenv import load_dotenv
+# Compatibilidade para importações legadas
+from app.config.database import get_db
+from app.extensions import db
 
-load_dotenv()  # Carrega as variáveis do .env
+# Função para inicializar o banco de dados
 
 
-def get_db():
-    # Tente usar a variável de ambiente, caso contrário, use "mongodb"
-    uri = os.environ.get("MONGODB_URI", "mongodb://mongodb:27017/adamchat")
-    client = MongoClient(uri)
-    db = client.get_default_database()
-    return db
+def init_db(app):
+    """
+    Inicializa o banco de dados com a aplicação Flask
+
+    Args:
+        app: Aplicação Flask
+    """
+    db.init_app(app)
+
+
+# Exportar db para que possa ser importado de app.db
+__all__ = ['get_db', 'db', 'init_db']

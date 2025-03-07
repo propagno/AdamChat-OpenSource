@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Círculo de fundo -->
+  <circle cx="60" cy="60" r="58" fill="#3f51b5" />
+  <!-- Letra A estilizada -->
+  <path d="M45 85L55 35H65L75 85H65L62 70H58L55 85H45Z" fill="white" />
+  <!-- Bolhas de diálogo -->
+  <circle cx="40" cy="45" r="10" fill="white" opacity="0.7" />
+  <circle cx="25" cy="55" r="6" fill="white" opacity="0.5" />
+  <circle cx="85" cy="40" r="8" fill="white" opacity="0.6" />
+  <circle cx="95" cy="55" r="5" fill="white" opacity="0.4" />
+</svg> 

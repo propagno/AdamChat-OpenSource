@@ -1,39 +1,66 @@
 // src/index.js
+// Apply MUI patches first (before any other imports)
+import './patches/patchMUI';
+import './mui-fix';
+import './mui-override.css';
+
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
-import { ReactKeycloakProvider } from '@react-keycloak/web';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import keycloak from './services/keycloak';
-import App from './App';
 import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
 
+// Container raiz para renderização do React
+const rootElement = document.getElementById('root');
 
-const theme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: { main: '#1976d2' },
-    grey: { 800: '#424242' },
-    common: { white: '#fff' },
-  },
-  typography: {
-    fontFamily: 'Roboto, sans-serif',
-  },
-});
-
-const initOptions = {
-  onLoad: 'login-required',  // força o login se o usuário não estiver autenticado
-  checkLoginIframe: false    // desativa verificação via iframe (evita problemas em alguns ambientes)
+// Função para renderizar a aplicação com tratamento de erro
+const renderApp = () => {
+  try {
+    const root = createRoot(rootElement);
+    root.render(
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    );
+    console.log('Aplicação renderizada com sucesso');
+  } catch (error) {
+    console.error('Erro ao renderizar a aplicação:', error);
+    
+    // Mostrar uma mensagem de erro amigável se a renderização falhar
+    rootElement.innerHTML = `
+      <div style="
+        font-family: system-ui, -apple-system, sans-serif;
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 20px;
+        text-align: center;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      ">
+        <h1 style="color: #d32f2f;">Erro na Aplicação</h1>
+        <p>Desculpe, encontramos um problema ao iniciar a aplicação.</p>
+        <button 
+          onclick="window.location.reload()" 
+          style="
+            background: #3f51b5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 20px;
+            border-radius: 4px;
+            cursor: pointer;
+          "
+        >
+          Recarregar Página
+        </button>
+      </div>
+    `;
+  }
 };
 
-const container = document.getElementById('root');
-const root = createRoot(container);
-root.render(
-  <ReactKeycloakProvider authClient={keycloak} initOptions={initOptions}>
-    <ThemeProvider theme={theme}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </ThemeProvider>
-  </ReactKeycloakProvider>
-);
+// Inicia a renderização
+renderApp();
+
+// Reporte métricas web
+reportWebVitals();
